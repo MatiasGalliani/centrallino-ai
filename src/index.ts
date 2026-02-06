@@ -97,6 +97,14 @@ fastify.register(async (fastify) => {
 
                     const audioChunk = Buffer.from(mediaData.media.payload, 'base64');
                     session.audioBuffer.push(audioChunk);
+
+                    if (session.audioBuffer.length > 50) {
+                        console.log('Enough audio buffered, ready to process');
+
+                        const combinedAudio = Buffer.concat(session.audioBuffer);
+
+                        session.audioBuffer = []; 
+                    }
                     break;
 
                 case 'stop':
