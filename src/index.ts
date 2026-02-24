@@ -64,13 +64,11 @@ interface CallSession {
 const activeCalls = new Map<string, CallSession>();
 
 async function getCampaignById(id: number) {
-    const client = new Client({
-        host: process.env.DB_HOST || 'localhost',
-        port: Number(process.env.DB_PORT) || 5432,
-        database: process.env.DB_NAME || 'voiceai',
-        user: process.env.DB_USER || 'postgres',
-        password: process.env.DB_PASSWORD || '',
-    });
+    const client = new Client(
+        process.env.DATABASE_URL
+            ? { connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } }
+            : { host: process.env.DB_HOST || 'localhost', port: Number(process.env.DB_PORT) || 5432, database: process.env.DB_NAME || 'voiceai', user: process.env.DB_USER || 'postgres', password: process.env.DB_PASSWORD || '' }
+    );
     try {
         await client.connect();
         const result = await client.query(
@@ -254,13 +252,11 @@ async function mp3ToMulaw(mp3Buffer: Buffer): Promise<Buffer> {
 }
 
 async function getCampaigns() {
-    const client = new Client({
-        host: process.env.DB_HOST || "localhost",
-        port: Number(process.env.DB_PORT) || 5432,
-        database: process.env.DB_NAME || "voiceai",
-        user: process.env.DB_USER || 'postgres',
-        password: process.env.DB_PASSWORD || '',
-    });
+    const client = new Client(
+        process.env.DATABASE_URL
+            ? { connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } }
+            : { host: process.env.DB_HOST || 'localhost', port: Number(process.env.DB_PORT) || 5432, database: process.env.DB_NAME || 'voiceai', user: process.env.DB_USER || 'postgres', password: process.env.DB_PASSWORD || '' }
+    );
 
     try {
         await client.connect();
@@ -289,13 +285,11 @@ async function createCampaign(campaign: {
     webhook_url?: string;
     calendar_connected?: boolean;
 }) {
-    const client = new Client({
-        host: process.env.DB_HOST || 'localhost',
-        port: Number(process.env.DB_PORT) || 5432,
-        database: process.env.DB_NAME || 'voiceai',
-        user: process.env.DB_USER || 'postgres',
-        password: process.env.DB_PASSWORD || '',
-    });
+    const client = new Client(
+        process.env.DATABASE_URL
+            ? { connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } }
+            : { host: process.env.DB_HOST || 'localhost', port: Number(process.env.DB_PORT) || 5432, database: process.env.DB_NAME || 'voiceai', user: process.env.DB_USER || 'postgres', password: process.env.DB_PASSWORD || '' }
+    );
 
     try {
         await client.connect();
@@ -323,13 +317,11 @@ async function createCampaign(campaign: {
 }
 
 async function deleteCampaign(id: number) {
-    const client = new Client({
-        host: process.env.DB_HOST || 'localhost',
-        port: Number(process.env.DB_PORT) || 5432,
-        database: process.env.DB_NAME || 'voiceai',
-        user: process.env.DB_USER || 'postgres',
-        password: process.env.DB_PASSWORD || '',
-    });
+    const client = new Client(
+        process.env.DATABASE_URL
+            ? { connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } }
+            : { host: process.env.DB_HOST || 'localhost', port: Number(process.env.DB_PORT) || 5432, database: process.env.DB_NAME || 'voiceai', user: process.env.DB_USER || 'postgres', password: process.env.DB_PASSWORD || '' }
+    );
 
     try {
         await client.connect();
@@ -360,13 +352,11 @@ async function updateCampaign(id: number, updates: {
     webhook_url?: string;
     calendar_connected?: boolean;
 }) {
-    const client = new Client({
-        host: process.env.DB_HOST || 'localhost',
-        port: Number(process.env.DB_PORT) || 5432,
-        database: process.env.DB_NAME || 'voiceai',
-        user: process.env.DB_USER || 'postgres',
-        password: process.env.DB_PASSWORD || '',
-    });
+    const client = new Client(
+        process.env.DATABASE_URL
+            ? { connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } }
+            : { host: process.env.DB_HOST || 'localhost', port: Number(process.env.DB_PORT) || 5432, database: process.env.DB_NAME || 'voiceai', user: process.env.DB_USER || 'postgres', password: process.env.DB_PASSWORD || '' }
+    );
 
     try {
         await client.connect();
