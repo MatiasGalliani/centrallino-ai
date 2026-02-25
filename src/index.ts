@@ -9,6 +9,12 @@ import ffmpegInstaller from '@ffmpeg-installer/ffmpeg'
 import { Readable, PassThrough } from 'node:stream';
 import OpenAI from 'openai';
 import twilio from 'twilio'
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 dotenv.config();
 
@@ -710,10 +716,32 @@ fastify.register(async (fastify) => {
     });
 });
 
-fastify.listen({ port: Number(PORT), host: '0.0.0.0' }, (err) => {
-    if (err) {
-        console.error(err);
+async function runMigrations() {
+    const client = new Client(
+        process.env.DATABASE_URL
+            ? { connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } }
+            : { host: process.env.DB_HOST || 'localhost', port: Number(process.env.DB_PORT) || 5432, database: process.env.DB_NAME || 'voiceai', user: process.env.DB_USER || 'postgres', password: process.env.DB_PASSWORD || '' }
+    );
+    try {
+        await client.connect();
+        const migrationPath = join(__dirname, '../migrations/001_create_campaigns_table.sql');
+        const migrationSQL = readFileSync(migrationPath, 'utf-8');
+        await client.query(migrationSQL);
+        console.log('[DB] Migrations applied successfully');
+    } catch (err) {
+        console.error('[DB] Migration error:', err);
         process.exit(1);
+    } finally {
+        await client.end();
     }
-    console.log(`Server listening on port:${PORT}`);
-})
+}
+
+runMigrations().then(() => {
+    fastify.listen({ port: Number(PORT), host: '0.0.0.0' }, (err) => {
+        if (err) {
+            console.error(err);
+            process.exit(1);
+        }
+        console.log(`Server listening on port:${PORT}`);
+    });
+});
